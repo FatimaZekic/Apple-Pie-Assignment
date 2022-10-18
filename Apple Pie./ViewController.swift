@@ -12,12 +12,13 @@ var listOfWords = ["buccaneer", "swift", "glorious", "incandescent", "bug", "pro
 let incorrectMovesAllowed = 7
 
 class ViewController: UIViewController {
-    
+    // begin a new round after a win
     var totalWins = 0 {
         didSet {
             newRound()
         }
     }
+    // begin a round after a loss
     var totalLosses = 0 {
         didSet {
             newRound()
@@ -39,7 +40,9 @@ class ViewController: UIViewController {
     
     func newRound(){
         if !listOfWords.isEmpty {
+            // removes the first word of the list when player completes a round
             let newWord = listOfWords.removeFirst()
+            // creates a new instance of Game
             currentGame = Game(word: newWord, incorrectMovesRemaining: incorrectMovesAllowed, guessedLetters: [])
             updateUI()
             enableLetterButtons(true)
@@ -56,17 +59,24 @@ class ViewController: UIViewController {
     }
     
     func updateUI(){
+        
+        // displays the final formatted word at the bottom of the screen
         var letters = [String]()
+        // store each newly created strings into a string array
         for letter in currentGame.formattedWord {
+            // convert the array of characters to array of strings
             letters.append(String(letter))
         }
+        // join the new collection together separated by blank spaces
         let wordWithSpacing = letters.joined(separator: " ")
         correctWordLabel.text = wordWithSpacing
         
+        // displays wins & losses score
         scoreLabel.text = "Wins: \(totalWins), Losses: \(totalLosses)"
         treeImageView.image = UIImage(named: "Tree \(currentGame.incorrectMovesRemaining)")
     }
 
+    // when a letter is pressed
     @IBAction func letterButtonPressed(_ sender: UIButton) {
         sender.isEnabled = false
         let letterString = sender.configuration!.title!
@@ -75,10 +85,13 @@ class ViewController: UIViewController {
         updateGameState()
     }
     
+    // updates game when player wins or loses a round
     func updateGameState() {
         if currentGame.incorrectMovesRemaining == 0 {
+            // if player loses round
             totalLosses += 1
         } else if currentGame.word == currentGame.formattedWord {
+            // if player wins round
             totalWins += 1
         } else {
             updateUI()
